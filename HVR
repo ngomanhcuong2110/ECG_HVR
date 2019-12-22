@@ -1,0 +1,73 @@
+import numpy as np
+import matplotlib.pyplot as plt
+with open("thunhf.txt","r") as reader:
+        line=reader.readline()
+        a=[]
+        while line !='':
+            #print(line,end='')
+            
+            a.append(line)
+            line=reader.readline()
+b=[]            
+for i in range(len(a)):
+	k=a[i][0:4]
+	b.append(float(k))
+c=np.array(b)
+print("Number of peaks:",np.size(c))
+print("Mean of peaks:",np.mean(c))
+print("Standart deviatation of peak:",np.std(c))
+t=np.cumsum(c)
+plt.figure(1)
+plt.plot(t/1000,c,label="ritmo")
+plt.xlabel('time')
+plt.ylabel('R-R interval')
+
+#dángua
+h=np.array([])
+for i in range (len(c)-300):
+    h=np.append(h,np.mean(c[i:i+300]))
+#
+print("Mean of peaks for each 5 mins:",np.mean(h))
+print("Standart deviatation of peak for ech 5 mins:",np.std(h))   
+k=np.diff(c)
+print("Diferrent",k)
+N50=k>=50
+sum50=np.sum(N50)
+print("Number of consecutive NN intervals with a difference of over 50 ms:",sum50)
+print("The proportion of NN intervals with a difference of more than 50 ms:",sum50/len(c))
+print("The coefficient of variation:",np.std(c)*100/np.mean(c),"%")
+M=int((c.max()-c.min())/8)
+Nx,cx=np.histogram(c,M)
+AM0=np.max(Nx)
+Ni=np.where(Nx==AM0)
+M0=cx[Ni]
+Nx1=Nx/M0
+plt.figure(2)
+plt.plot(cx[1:90],Nx1,label="Interval Distribution")
+plt.xlabel('Interval duration')
+plt.ylabel('Number interval')
+AM0=100*AM0/len(c)
+print('Fashion amplitude %',AM0)
+VR=c.max()-c.min()
+print('Variational range',VR)
+IN=AM0*len(c)/VR
+print('Baevsky Index of Vegetative Equilibrium',IN)
+N=len(c)
+R1=c[1:N-1]
+R2=c[2:N]
+a = np.polyfit(R1,R2,1)
+aa=np.array([400,800])
+RR=np.polyval(a,aa)
+m11=np.min(R1);m12=np.max(R1);m22=np.min(R2);m22=np.max(R2);
+plt.figure(3)
+plt.scatter(R1,R2,5)
+plt.plot(aa,RR,'r')
+plt.show()
+
+
+
+
+
+
+
+
